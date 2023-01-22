@@ -15,6 +15,8 @@ import threading
 import time
 import sys
 
+button5 = []
+
 def CreateGUI():
     # Create the GUI
     root = Tk()
@@ -28,15 +30,20 @@ def CreateGUI():
     fig = plt.figure()
     fig.patch.set_facecolor('black')
 
-    ax = fig.add_subplot(111)
     canvas = FigureCanvasTkAgg(fig, master=root)
     canvas.get_tk_widget().place(relx=0.5, rely=0.5, relwidth=9/16, relheight=1, anchor='center')
     canvas.draw()
 
-    difficulty = pd.DataFrame(numpy.random.rand(1000, 1000))
-    sns.heatmap(ax=ax, data=difficulty, cmap="YlGnBu",cbar=False,xticklabels=False,yticklabels=False)
+    # create a 2D dataframe called 'difficulty' with 1000 rows and 1000 columns filled with zeros
+    difficulty = pd.DataFrame(numpy.zeros((1000, 1000)))
 
+    ax = fig.add_subplot(111)
+    sns.color_palette("coolwarm", as_cmap=True)
+    sns.heatmap(ax=ax, data=difficulty,cbar=False,xticklabels=False,yticklabels=False,center=0.5)
     plt.tight_layout()
+
+    global button5
+    button5 = ttk.Button(root, text="Exit", command=lambda: exit())
 
     # add a button to end the program and close the window at the bottom left of the tkinter window
     exitButton = Button(root, text="Exit", command=lambda: exit())
@@ -48,13 +55,14 @@ def CreateGUI():
 
     return root, fig, canvas, ax
 
+
 rootUI = []
 figure = []
 mainCanvas = []
 ax = []
 
 # create a 2D pandas dataframe called 'difficulty' with 1000 rows and 1000 columns filled with numbers between 0 and 1
-difficulty = pd.DataFrame(numpy.random.rand(1000, 1000))
+#difficulty = pd.DataFrame(numpy.random.rand(1000, 1000))
 
 rootUI, figure, mainCanvas, ax = CreateGUI()
 #mainCanvas, figure = SeabornHeatmapinTkinter(difficulty,rootUI)
@@ -65,11 +73,14 @@ def Main():
         difficulty = pd.DataFrame(numpy.random.rand(1000, 1000))
 
         ax.cla()
-        sns.heatmap(ax=ax, data=difficulty, cmap="YlGnBu",cbar=False,xticklabels=False,yticklabels=False)
-        mainCanvas.draw()
-        
+        sns.heatmap(ax=ax, data=difficulty,cbar=False,xticklabels=False,yticklabels=False,center=0.5)
 
-        time.sleep(0.1)
+        mainCanvas.draw()
+
+        # place button5 at a random location on the tkinter window
+        button5.place(relx=numpy.random.rand(), rely=numpy.random.rand(), relwidth=0.05, relheight=0.05, anchor='center')
+
+        #time.sleep(0.1)
         print(i)
 
 # run Main() in its own thread so the tkinter window can update
